@@ -1,0 +1,9 @@
+# Licenses
+
+The following third-party licenses are applicable to this project:
+
+{{range .SortedKeys}}## {{.}}
+
+{{range index $.ComponentsByLicense .}}- {{.Name}} ({{.Version}})
+{{end}}
+{{end}}
