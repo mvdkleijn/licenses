@@ -17,6 +17,7 @@ not re-use...
 
 ## Licensing
 
-This software is made available under the [MPL-2.0](https://choosealicense.com/licenses/mpl-2.0/) license. The full details are available from the [LICENSE](/LICENSE) file.
+This software is made available under the [MPL-2.0](https://choosealicense.com/licenses/mpl-2.0/) license.
+The full details are available from the [LICENSE](/LICENSE) file.
 
 Copyright (C) 2024  Martijn van der Kleijn
