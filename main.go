@@ -11,50 +11,105 @@ package main
 
 import (
 	"encoding/json"
+	"encoding/xml"
+	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"sort"
 	"text/template"
 )
 
-// Component represents the structure of a component in the input JSON.
+// Component represents the structure of a component in the input.
 type Component struct {
-	Name     string `json:"name"`
-	Version  string `json:"version"`
+	Name     string `json:"name" xml:"name"`
+	Version  string `json:"version" xml:"version"`
 	Licenses []struct {
 		License struct {
-			ID string `json:"id"`
-		} `json:"license"`
-	} `json:"licenses"`
+			ID string `json:"id" xml:"id"`
+		} `json:"license" xml:"license"`
+	} `json:"licenses" xml:"licenses"`
 }
 
-// BOM represents the overall structure of the input JSON.
+// BOM represents the overall structure of the input.
 type BOM struct {
-	Components []Component `json:"components"`
+	XMLName    xml.Name    `xml:"bom"` // Matches the root element, e.g., <bom>
+	Components []Component `json:"components" xml:"components>component"`
 }
 
 // ComponentsByLicense groups components by license ID
 type ComponentsByLicense map[string][]Component
 
-func main() {
-	// Define command-line flags
-	inputFileFlag := flag.String("i", "./sbom.json", "SBOM input file in CycloneDX json format.")
-	outputFileFlag := flag.String("o", "./licenses.md", "Output file.")
-	templateFileFlag := flag.String("t", "./template.txt", "Golang template file to use for output.")
+func parse(filename string, format string) (BOM, error) {
+	var bom BOM
+	var err error
 
-	flag.Parse()
+	if format == "json" {
+		bom, err = parseJSON(filename)
+	} else if format == "xml" {
+		bom, err = parseXML(filename)
+	} else {
+		return BOM{}, fmt.Errorf("unsupported format: %s", format)
+	}
 
-	file, err := os.Open(*inputFileFlag)
 	if err != nil {
-		log.Fatalf("failed to open input JSON file: %v", err)
+		if errors.Is(err, io.EOF) {
+			return BOM{}, errors.New("unknown structure or empty file")
+		}
+		return BOM{}, err
+	}
+
+	return bom, nil
+}
+
+func parseJSON(filename string) (BOM, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return BOM{}, err
 	}
 	defer file.Close()
 
 	var bom BOM
 	if err := json.NewDecoder(file).Decode(&bom); err != nil {
-		log.Fatalf("failed to decode JSON: %v", err)
+		return BOM{}, err
+	}
+	return bom, nil
+}
+
+func parseXML(filename string) (BOM, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return BOM{}, err
+	}
+	defer file.Close()
+
+	var bom BOM
+	if err := xml.NewDecoder(file).Decode(&bom); err != nil {
+		return BOM{}, err
+	}
+	return bom, nil
+}
+
+func main() {
+	inputFileFlag := flag.String("i", "./sbom.json", "Input file path")
+	outputFileFlag := flag.String("o", "./licenses.md", "Output file.")
+	formatFlag := flag.String("f", "json", "Input format (json or xml)")
+	templateFileFlag := flag.String("t", "./template.txt", "Golang template file to use for output.")
+	flag.Parse()
+
+	var bom BOM
+
+	var err error
+
+	bom, err = parse(*inputFileFlag, *formatFlag)
+	if err != nil {
+		log.Fatalf("Error parsing file: %v", err)
+	}
+
+	if len(bom.Components) == 0 {
+		log.Fatalf("unknown structure or empty components in sbom")
 	}
 
 	// Group components by license
