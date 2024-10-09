@@ -48,19 +48,3 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
-
-# Please see https://github.com/CycloneDX/cyclonedx-gomod?tab=readme-ov-file#goreleaser-
-sboms:
-  - artifacts: binary
-    cmd: cyclonedx-gomod
-    # changes: xml instead of json, and assert-licenses to add license info per component
-    args:
-      [
-        'mod',
-        '-licenses',
-        '-assert-licenses',
-        '-std',
-        '-output',
-        '$document',
-        './',
-      ]
