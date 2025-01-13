@@ -1,0 +1,204 @@
+# -------------------------------------------------------------------------------------
+# This file treats “compatible” to mean:
+#
+#    A given license can be used (inbound / application dependency) and redistributed
+#    (outbound / application) under the main application license without creating
+#    a license conflict.
+#
+# In simpler terms: if you can take (dependency) code under License X, combine it
+# with the main application code, and then distribute the whole under the main
+# application's license, we mark X as compatible (c). If there is a known or likely
+# conflict (or the situation is murky), we mark it as warning (w) or incompatible (i)
+# accordingly.
+#
+# Inbound compatibility: “Can we redistribute this code under the main application license without conflict?”
+#
+# DISCLAIMER: This is NOT legal advice. License interactions can be nuanced.
+#             If you need certainty, consult the official texts and a qualified
+#             lawyer.
+#
+# Format:
+#
+# <main license string>:
+#   <dependency license string>:
+#     status: <c|i|w>
+#     reason: <string>
+# -------------------------------------------------------------------------------------
+
+EUPL-1.2:
+  # -------------------------------------------------------------------------------------
+  # PERMISSIVE LICENSES
+  #
+  # Generally, permissive licenses (MIT, BSD, ISC, etc.) do NOT forbid re-licensing under
+  # a stronger copyleft license like EUPL, so we label them "c" (compatible).
+  #
+  # -------------------------------------------------------------------------------------
+  MIT:
+    status: c
+    reason: "MIT is permissive; code under MIT can be re-licensed under EUPL."
+
+  BSD-2-Clause:
+    status: c
+    reason: "BSD-2-Clause is permissive; inbound re-licensing to EUPL is allowed."
+
+  BSD-3-Clause:
+    status: c
+    reason: "BSD-3-Clause is also permissive; EUPL re-licensing does not conflict."
+
+  BSD-Source-Code:
+    status: c
+    reason: >
+      “BSD-Source-Code” (a.k.a. 4-clause BSD) adds an advertising clause, but
+      it does not forbid relicensing under EUPL. The main requirement is to
+      retain proper attribution in advertising materials.
+
+  0BSD:
+    status: c
+    reason: >
+      0BSD is effectively a public-domain-style license with zero clauses, so
+      there are no restrictions preventing inbound re-licensing under EUPL-1.2.
+
+  ISC:
+    status: c
+    reason: "ISC is a very permissive license, so EUPL re-licensing is fine."
+
+  Apache-2.0:
+    status: c
+    reason: >
+      Although there's complexity around patent clauses, EUPL 1.2 is generally
+      interpreted as GPLv3-compatible, and Apache-2.0 is compatible with GPLv3.
+      Therefore, inbound re-licensing to EUPL is typically not prohibited.
+
+  # -------------------------------------------------------------------------------------
+  # GNU LICENSES
+  #
+  # Some of these are explicitly mentioned as "compatible" in the EUPL Appendix for
+  # outbound re-licensing from EUPL to GPL. Inbound direction can be trickier,
+  # especially for GPL v2 "only" vs. "or later."
+  # -------------------------------------------------------------------------------------
+
+  # GPL v2 (only)
+  GPL-2.0-only:
+    status: w
+    reason: >
+      If GPL-2.0 code lacks the "or later" clause, re-licensing to EUPL may be murky.
+      Some argue EUPL's terms can conflict with strict GPL-2.0. Review on case-by-case basis.
+
+  # GPL v2 (or later)
+  GPL-2.0-or-later:
+    status: c
+    reason: >
+      Code under GPL-2.0+ can generally be upgraded to GPL-3.0 or a GPL-3.0-compatible license.
+      EUPL 1.2 is often treated as GPL-3.0-compatible, so inbound is acceptable.
+
+  # GPL v3 (only)
+  GPL-3.0-only:
+    status: c
+    reason: >
+      EUPL is considered broadly compatible with GPL v3. You can typically
+      integrate GPL-3.0 code and release under EUPL (though do verify text overlap carefully).
+
+  # AGPL v3 (only)
+  AGPL-3.0-only:
+    status: c
+    reason: >
+      The EUPL Appendix lists AGPL-3.0 as outward-compatible, and inbound re-licensing to EUPL
+      generally doesn't conflict because AGPL v3 terms are not stricter than EUPL.
+
+  # LGPL 2.1 (only)
+  LGPL-2.1-only:
+    status: w
+    reason: >
+      This can be tricky, because LGPL-2.1 has some linking exceptions and no "or later" text by default.
+      Often, you can relicense if there's an explicit "or later" clause. Otherwise, check carefully.
+
+  # LGPL 2.1 (or later)
+  LGPL-2.1-or-later:
+    status: c
+    reason: >
+      Adding "or later" typically lets you upgrade to LGPL-3.0 or a GPL-3.0-compatible license,
+      which EUPL broadly is. Usually this is safe inbound.
+
+  # LGPL 3.0 (only)
+  LGPL-3.0-only:
+    status: c
+    reason: "LGPL 3.0 is effectively a subset of GPL v3 terms, so inbound re-licensing to EUPL is allowed."
+
+  # -------------------------------------------------------------------------------------
+  # ECLIPSE PUBLIC LICENSES
+  # -------------------------------------------------------------------------------------
+  EPL-1.0:
+    status: w
+    reason: >
+      The older EPL-1.0 is not in the official EUPL “compatible licenses” list.
+      Some say inbound re-licensing is possible with extra disclaimers, but there are nuances.
+
+  EPL-2.0:
+    status: c
+    reason: >
+      EUPL 1.2 includes EPL-2.0 in its Appendix (for outbound),
+      and inbound direction is generally not contradictory.
+
+  # -------------------------------------------------------------------------------------
+  # MOZILLA PUBLIC LICENSE
+  # -------------------------------------------------------------------------------------
+  MPL-1.1:
+    status: w
+    reason: >
+      MPL-1.1 can be tricky to combine with other copyleft licenses. It's not in EUPL's
+      official list. Often replaced by MPL-2.0. Review carefully.
+
+  MPL-2.0:
+    status: c
+    reason: >
+      EUPL 1.2 includes MPL-2.0 in its Appendix for outbound re-licensing,
+      which generally implies inbound is acceptable.
+
+  # -------------------------------------------------------------------------------------
+  # CeCILL LICENSES
+  # -------------------------------------------------------------------------------------
+  CeCILL-2.0:
+    status: c
+    reason: >
+      EUPL 1.2 explicitly lists CeCILL v2.0 as an outbound-compatible license.
+      Typically no conflict inbound.
+
+  CeCILL-2.1:
+    status: c
+    reason: >
+      EUPL 1.2 likewise lists CeCILL v2.1 as compatible. Inbound re-licensing to EUPL is fine.
+
+  # -------------------------------------------------------------------------------------
+  # OPEN SOFTWARE LICENSES
+  # -------------------------------------------------------------------------------------
+  OSL-2.1:
+    status: c
+    reason: >
+      EUPL 1.2 references OSL in its Appendix. Inbound re-licensing is not prohibited.
+
+  OSL-3.0:
+    status: c
+    reason: >
+      OSL-3.0 is also in the EUPL Appendix for outbound. Generally considered inbound-compatible.
+
+  # -------------------------------------------------------------------------------------
+  # OTHER COMMON LICENSES
+  # (Mark them as "c", "w", or "i" based on known or likely conflicts)
+  # -------------------------------------------------------------------------------------
+  CDDL-1.0:
+    status: w
+    reason: >
+      Combining CDDL code with copyleft licenses can lead to "dual-licensing"
+      complexity (not in EUPL’s official list). Evaluate on a case-by-case basis.
+
+  SSPL-1.0:
+    status: i
+    reason: >
+      SSPL has unique requirements that are not generally seen as compatible
+      with standard free/open licenses, including EUPL.
+
+# -------------------------------------------------------------------------------------
+# You can add or remove entries as needed. For any license not shown, make
+# a judgement call: "c", "w", or "i" depending on whether it can be inbound-relicensed
+# to the main license without conflicts.
+# -------------------------------------------------------------------------------------
