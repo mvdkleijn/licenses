@@ -27,6 +27,13 @@
 
 EUPL-1.2:
   # -------------------------------------------------------------------------------------
+  # Itself
+  # -------------------------------------------------------------------------------------
+  EUPL-1.2:
+    status: c
+    reason: "EUPL-1.2 is always compatible with itself."
+
+  # -------------------------------------------------------------------------------------
   # PERMISSIVE LICENSES
   #
   # Generally, permissive licenses (MIT, BSD, ISC, etc.) do NOT forbid re-licensing under
