@@ -1,3 +1,8 @@
+# MIGRATION NOTICE
+
+Development of this tool has been migrated to https://opencommit.eu/mvdkleijn/licenses
+The Github repo will be kept in sync for now.
+
 # Licenses
 
 Simple program that extracts some license data from a CycloneDX type SBOM,
